@@ -208,7 +208,7 @@ def quote():
         symbol = request.form.get("symbol")
         data = lookup(symbol)
         if not data:
-            return apology("symbol not found", 403)
+            return apology("symbol not found", 400)
         return render_template("quoted.html", name=data["name"], price=data["price"], symbol=symbol.upper())
 
     else:
@@ -226,13 +226,13 @@ def register():
 
         # Ensure username was submitted
         if not username:
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
 
         # Ensure password was submitted and confirmation matches
         if not password and confirmation:
-            return apology("must provide password and confirmation", 403)
+            return apology("must provide password and confirmation", 400)
         elif password != confirmation:
-            return apology("password and confirmation must match", 403)
+            return apology("password and confirmation must match", 400)
 
         # Hash password
         hash = generate_password_hash(password)
@@ -241,7 +241,7 @@ def register():
         try:
             db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", username, hash)
         except ValueError:
-            return apology("username already exists", 403)
+            return apology("username already exists", 400)
 
         # Redirect to login page
         return redirect("/login")
