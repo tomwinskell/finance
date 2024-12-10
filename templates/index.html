@@ -18,9 +18,9 @@
     <tbody>
       <tr>
         <td>{{user.username}}</td>
-        <td>US$ {{user.cash}}</td>
-        <td>US$ {{user.sum_of_stocks}}</td>
-        <td>US$ {{user.total_balance}}</td>
+        <td>{{user.cash | usd}}</td>
+        <td>{{user.sum_of_stocks | usd}}</td>
+        <td>{{user.total_balance | usd}}</td>
       </tr>
     </tbody>
   </table>
