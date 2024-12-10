@@ -282,8 +282,13 @@ def sell():
         lookup_data = lookup(symbol)
         price = int(lookup_data.get('price', 0))  # Default to 0 if 'price' key is missing
 
+        # check if quantity is a digit and positive
+        shares_to_sell = request.form.get("shares")
+        if not bool(re.fullmatch(r'[1-9]\d*', shares_to_sell)):
+            return apology("quantity error", 400)
+
         # get num shares to sell, num shares held, calculate shares remaining after sale
-        shares_to_sell = int(request.form.get("shares"))
+        shares_to_sell = int(shares_to_sell)
         shares_held = int(symbol_data.get('quantity', 0))
         shares_remaining = shares_held - shares_to_sell
 
