@@ -43,7 +43,7 @@
         <th scope="row">{{stock['symbol']}}</th>
         <td>{{stock['name']}}</td>
         <td>{{stock['quantity']}}</td>
-        <td>US$ {{stock['price']}}</td>
+        <td>US$ {{stock['price'] | usd}}</td>
         <td>US$ {{stock['value']}}</td>
       </tr>
     {% endfor %}
