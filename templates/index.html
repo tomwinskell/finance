@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{user.username}} Account Statement
+{% endblock %}
+
+{% block main %}
+<div class="mb-3">
+<table class="table">
+    <thead>
+      <tr>
+        <th class="col">Username</th>
+        <th class="col">Cash</th>
+        <th class="col">Stocks</th>
+        <th class="col">Total Balance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{user.username}}</td>
+        <td>US$ {{user.cash}}</td>
+        <td>US$ {{user.sum_of_stocks}}</td>
+        <td>US$ {{user.total_balance}}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="mb-3">
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Symbol</th>
+        <th scope="col">Company Name</th>
+        <th scope="col">Shares Owned</th>
+        <th scope="col">Current Price</th>
+        <th scope="col">Total Value</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for stock in stocks %}
+      <tr>
+        <th scope="row">{{stock['symbol']}}</th>
+        <td>{{stock['name']}}</td>
+        <td>{{stock['quantity']}}</td>
+        <td>US$ {{stock['price']}}</td>
+        <td>US$ {{stock['value']}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+  </div>
+{% endblock %}
