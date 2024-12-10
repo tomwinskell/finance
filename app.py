@@ -82,7 +82,7 @@ def buy():
         # lookup the symbol the user requested to buy to get the current price
         data = lookup(symbol)
         if not data:
-            return apology("symbol not found", 403)
+            return apology("symbol not found", 400)
         price = int(data["price"])
         totalCost = price * quantity
 
@@ -225,7 +225,7 @@ def register():
         confirmation = request.form.get("confirmation")
 
         # Ensure username was submitted
-        if not username:
+        if not username or username = "":
             return apology("must provide username", 400)
 
         # Ensure password was submitted and confirmation matches
