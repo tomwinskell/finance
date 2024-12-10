@@ -1,6 +1,7 @@
 import requests
 import json
 from datetime import datetime
+import re
 
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
@@ -77,7 +78,17 @@ def buy():
 
         # get values submitted by user using the form
         symbol = request.form.get("symbol")
-        quantity = int(request.form.get("shares"))
+        quantity = request.form.get("shares")
+
+        # check if quantity is a digit and positive
+        if not is_positive_digit(quantity):
+            return apology("quantity error", 400)
+        def is_positive_digit(s):
+        # Match a string that is a digit and greater than 0
+            return bool(re.fullmatch(r'[1-9]\d*', s))
+
+        # convert quantity to int
+        quantity = int(quantity)
 
         # lookup the symbol the user requested to buy to get the current price
         data = lookup(symbol)
@@ -231,7 +242,7 @@ def register():
         # Ensure password was submitted and confirmation matches
         if not password and confirmation:
             return apology("must provide password and confirmation", 400)
-        
+
         elif password != confirmation:
             return apology("password and confirmation must match", 400)
 
