@@ -81,11 +81,8 @@ def buy():
         quantity = request.form.get("shares")
 
         # check if quantity is a digit and positive
-        if not is_positive_digit(quantity):
+        if not bool(re.fullmatch(r'[1-9]\d*', quantity)):
             return apology("quantity error", 400)
-        def is_positive_digit(s):
-        # Match a string that is a digit and greater than 0
-            return bool(re.fullmatch(r'[1-9]\d*', s))
 
         # convert quantity to int
         quantity = int(quantity)
