@@ -300,7 +300,7 @@ def sell():
         # update records in database
         try:
             if shares_to_sell > shares_held:
-                return apology("not enough shares to sell", 403)
+                return apology("not enough shares to sell", 400)
             else:
                 db.execute("INSERT INTO transactions (symbol, price, quantity, buysell, userid) VALUES (?, ?, ?, 'Sell', ?)", symbol, price, shares_to_sell, userid)
                 db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash_balance, userid)
@@ -310,7 +310,7 @@ def sell():
                     db.execute("UPDATE holdings SET quantity = ? WHERE id = ?", shares_remaining, symbol_id)
                 return redirect('/')
         except ValueError:
-            return apology("error", 403)
+            return apology("error", 400)
 
     # get request render sell.html
     else:
