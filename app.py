@@ -235,11 +235,11 @@ def register():
         if len(username) == 0 or len(password) == 0 or len(confirmation) == 0:
             return apology("must provide username", 400)
 
-        # Ensure password was submitted and confirmation matches
-        if not password and confirmation:
-            return apology("must provide password and confirmation", 400)
+        # # Ensure password was submitted and confirmation matches
+        # if not password and confirmation:
+        #     return apology("must provide password and confirmation", 400)
 
-        elif password != confirmation:
+        if password != confirmation:
             return apology("password and confirmation must match", 400)
 
         # Hash password
