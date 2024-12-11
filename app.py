@@ -1,4 +1,3 @@
-import requests
 import json
 from datetime import datetime
 import re
@@ -271,27 +270,31 @@ def sell():
 
     if request.method == "POST":
 
-        # get id for symbol to sell from user input
-        symbol_id = request.form.get("symbol")
-        if not bool(re.fullmatch(r'[1-9]\d*', symbol_id)):
-            return apology("no symbol or invalid symbol selected", 400)
-        symbol_id = int(symbol_id)
+        # get symbol to sell from user input, check if valid
+        symbol = request.form.get("symbol")
+        lookup_data = lookup(symbol)
+        if not lookup_data:
+            return apology("invalid symbol selected", 400)
+
+        # if not bool(re.fullmatch(r'[1-9]\d*', symbol_id)):
+        #     return apology("no symbol or invalid symbol selected", 400)
+        # symbol_id = int(symbol_id)
 
         # iterate over users holdings find match for user entered id, set symbol
-        symbol_data = next((item for item in stocks if item.get('id') == symbol_id), None)
-        symbol = symbol_data.get('symbol', None)
+        # symbol = symbol_data.get('symbol', None)
 
         # get latest price for symbol to sell
-        lookup_data = lookup(symbol)
+        # lookup_data = lookup(symbol)
         price = int(lookup_data.get('price', 0))  # Default to 0 if 'price' key is missing
 
-        # check if quantity is a digit and positive
+        # get num shares to sell, check if quantity is a digit and positive
         shares_to_sell = request.form.get("shares")
         if not bool(re.fullmatch(r'[1-9]\d*', shares_to_sell)):
             return apology("quantity must be positive whole number", 400)
-
-        # get num shares to sell, num shares held, calculate shares remaining after sale
         shares_to_sell = int(shares_to_sell)
+
+        # get num shares held, calculate shares remaining after sale
+        symbol_data = next((item for item in stocks if item.get('symbol') == symbol), None)
         shares_held = int(symbol_data.get('quantity', 0))
         shares_remaining = shares_held - shares_to_sell
 
@@ -308,9 +311,9 @@ def sell():
                 db.execute("INSERT INTO transactions (symbol, price, quantity, buysell, userid) VALUES (?, ?, ?, 'Sell', ?)", symbol, price, shares_to_sell, userid)
                 db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash_balance, userid)
                 if shares_to_sell == shares_held:
-                    db.execute("DELETE FROM holdings WHERE id = ?", symbol_id)
+                    db.execute("DELETE FROM holdings WHERE symbol = ?", symbol)
                 elif shares_to_sell < shares_held:
-                    db.execute("UPDATE holdings SET quantity = ? WHERE id = ?", shares_remaining, symbol_id)
+                    db.execute("UPDATE holdings SET quantity = ? WHERE symbol = ?", shares_remaining, symbol)
                 return redirect('/')
         except ValueError:
             return apology("error", 400)
