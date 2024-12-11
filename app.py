@@ -147,8 +147,8 @@ def history():
 
     # create dict for each of the stocks in portfolio containing all data required for the page
     for stock in stocks:
-        temp = lookup(stock['symbol'])
-        stock['name'] = temp['name']
+        temp = db.execute("SELECT name FROM exchange WHERE symbol = ?", stock['symbol'])
+        stock['name'] = temp[0]['name']
 
     # render the page with stocks and user dicts with all data
     return render_template("history.html", stocks=stocks, username=username, date=now)
@@ -322,4 +322,5 @@ def sell():
         return render_template("sell.html", stocks=stocks)
     
 if __name__ == "__main__":
+    # app.run(debug=True, port=5001)
     app.run(debug=False)
