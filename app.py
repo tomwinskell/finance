@@ -320,3 +320,6 @@ def sell():
     # get request render sell.html
     else:
         return render_template("sell.html", stocks=stocks)
+    
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)
