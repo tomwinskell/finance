@@ -272,7 +272,10 @@ def sell():
     if request.method == "POST":
 
         # get id for symbol to sell from user input
-        symbol_id = int(request.form.get("symbol"))
+        symbol_id = request.form.get("symbol")
+        if not bool(re.fullmatch(r'[1-9]\d*', symbol_id)):
+            return apology("no symbol selected", 400)
+        symbol_id = int(symbol_id)
 
         # iterate over users holdings find match for user entered id, set symbol
         symbol_data = next((item for item in stocks if item.get('id') == symbol_id), None)
@@ -285,7 +288,7 @@ def sell():
         # check if quantity is a digit and positive
         shares_to_sell = request.form.get("shares")
         if not bool(re.fullmatch(r'[1-9]\d*', shares_to_sell)):
-            return apology("quantity error", 400)
+            return apology("quantity must be positive whole number", 400)
 
         # get num shares to sell, num shares held, calculate shares remaining after sale
         shares_to_sell = int(shares_to_sell)
