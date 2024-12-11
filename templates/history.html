@@ -42,7 +42,7 @@
             <td>{{stock['name']}}</td>
             <td>{{stock['buysell']}}</td>
             <td>{{stock['quantity']}}</td>
-            <td>US$ {{stock['price']}}</td>
+            <td>{{stock['price'] | usd}}</td>
         </tr>
         {% endfor %}
         </tbody>

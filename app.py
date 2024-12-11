@@ -274,7 +274,7 @@ def sell():
         # get id for symbol to sell from user input
         symbol_id = request.form.get("symbol")
         if not bool(re.fullmatch(r'[1-9]\d*', symbol_id)):
-            return apology("no symbol selected", 400)
+            return apology("no symbol or invalid symbol selected", 400)
         symbol_id = int(symbol_id)
 
         # iterate over users holdings find match for user entered id, set symbol
