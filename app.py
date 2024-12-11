@@ -109,7 +109,7 @@ def buy():
         # try to update the database with the request to buy
         try:
             if totalCost > cash:
-                return apology("insufficient cash available", 403)
+                return apology("insufficient cash available", 400)
             else:
                 db.execute("INSERT INTO transactions (symbol, price, quantity, buysell, userid) VALUES (?, ?, ?, 'Buy', ?)", symbol, price, quantity, userid)
                 db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash_balance, userid)
@@ -121,7 +121,7 @@ def buy():
             return redirect("/")
 
         except ValueError:
-            return apology("unable to complete transaction", 403)
+            return apology("error updating database", 400)
 
     else:
         return render_template("buy.html")
@@ -162,11 +162,11 @@ def login():
     if request.method == "POST":
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
 
         # Query database for username
         rows = db.execute(
@@ -177,7 +177,7 @@ def login():
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], request.form.get("password")
         ):
-            return apology("invalid username and/or password", 403)
+            return apology("invalid username and/or password", 400)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -232,7 +232,7 @@ def register():
         confirmation = request.form.get("confirmation")
 
         # Ensure username was submitted
-        if not username:
+        if len(username) == 0:
             return apology("must provide username", 400)
 
         # Ensure password was submitted and confirmation matches
@@ -276,15 +276,7 @@ def sell():
         if not lookup_data:
             return apology("invalid symbol selected", 400)
 
-        # if not bool(re.fullmatch(r'[1-9]\d*', symbol_id)):
-        #     return apology("no symbol or invalid symbol selected", 400)
-        # symbol_id = int(symbol_id)
-
-        # iterate over users holdings find match for user entered id, set symbol
-        # symbol = symbol_data.get('symbol', None)
-
         # get latest price for symbol to sell
-        # lookup_data = lookup(symbol)
         price = int(lookup_data.get('price', 0))  # Default to 0 if 'price' key is missing
 
         # get num shares to sell, check if quantity is a digit and positive
@@ -316,7 +308,7 @@ def sell():
                     db.execute("UPDATE holdings SET quantity = ? WHERE symbol = ?", shares_remaining, symbol)
                 return redirect('/')
         except ValueError:
-            return apology("error", 400)
+            return apology("error updating database", 400)
 
     # get request render sell.html
     else:
