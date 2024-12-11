@@ -232,7 +232,7 @@ def register():
         confirmation = request.form.get("confirmation")
 
         # Ensure username was submitted
-        if len(username) == 0:
+        if len(username) == 0 or len(paddword) = 0 or len(confirmation) == 0:
             return apology("must provide username", 400)
 
         # Ensure password was submitted and confirmation matches
