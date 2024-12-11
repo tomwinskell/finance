@@ -56,7 +56,7 @@ def index():
         stock["value"] = round(stock["quantity"] * stock["price"], 2)
         user["sum_of_stocks"] += stock['value']
     user['sum_of_stocks'] = round(user["sum_of_stocks"], 2)
-    user["total_balance"] = round(user['cash'] + user ['sum_of_stocks'], 2)
+    user["total_balance"] = round(user['cash'] + user['sum_of_stocks'], 2)
 
     # render the page with stocks and user dicts with all data
     return render_template("index.html", stocks=stocks, user=user)
@@ -101,7 +101,6 @@ def buy():
             current_quantity = int(holdings_data.get('quantity', 0))
             new_quantity = quantity + current_quantity
 
-
         # get users cash, calculate new cash balance
         cash = int(user[0].get('cash', 0))
         new_cash_balance = cash - totalCost
@@ -111,13 +110,16 @@ def buy():
             if totalCost > cash:
                 return apology("insufficient cash available", 400)
             else:
-                db.execute("INSERT INTO transactions (symbol, price, quantity, buysell, userid) VALUES (?, ?, ?, 'Buy', ?)", symbol, price, quantity, userid)
+                db.execute("INSERT INTO transactions (symbol, price, quantity, buysell, userid) VALUES (?, ?, ?, 'Buy', ?)",
+                           symbol, price, quantity, userid)
                 db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash_balance, userid)
 
                 if holdings_data == None:
-                    db.execute("INSERT INTO holdings (symbol, quantity, userid) VALUES (?, ?, ?)", symbol, quantity, userid)
+                    db.execute(
+                        "INSERT INTO holdings (symbol, quantity, userid) VALUES (?, ?, ?)", symbol, quantity, userid)
                 else:
-                    db.execute("UPDATE holdings SET quantity = ? WHERE id = ?", new_quantity, symbol_id)
+                    db.execute("UPDATE holdings SET quantity = ? WHERE id = ?",
+                               new_quantity, symbol_id)
             return redirect("/")
 
         except ValueError:
@@ -150,6 +152,7 @@ def history():
 
     # render the page with stocks and user dicts with all data
     return render_template("history.html", stocks=stocks, username=username, date=now)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -200,13 +203,16 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
+
 @app.route("/search")
 def search():
     q = request.args.get("q")
     if q:
-        data = db.execute("SELECT * FROM exchange WHERE symbol LIKE ? OR name LIKE ?", f'%{q}%', f'%{q}%')
+        data = db.execute(
+            "SELECT * FROM exchange WHERE symbol LIKE ? OR name LIKE ?", f'%{q}%', f'%{q}%')
     if data:
         return json.dumps(data)
+
 
 @app.route("/quote", methods=["GET", "POST"])
 @login_required
@@ -221,6 +227,7 @@ def quote():
     else:
         return render_template("quote.html")
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
@@ -231,14 +238,11 @@ def register():
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
 
-        # Ensure username was submitted
+        # Ensure username, password and confirmation not blank
         if len(username) == 0 or len(password) == 0 or len(confirmation) == 0:
             return apology("must provide username", 400)
 
-        # # Ensure password was submitted and confirmation matches
-        # if not password and confirmation:
-        #     return apology("must provide password and confirmation", 400)
-
+        # Ensure password matches confirmation
         if password != confirmation:
             return apology("password and confirmation must match", 400)
 
@@ -257,6 +261,7 @@ def register():
     # User made GET request to register page, render register template
     else:
         return render_template("register.html")
+
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
@@ -300,12 +305,14 @@ def sell():
             if shares_to_sell > shares_held:
                 return apology("not enough shares to sell", 400)
             else:
-                db.execute("INSERT INTO transactions (symbol, price, quantity, buysell, userid) VALUES (?, ?, ?, 'Sell', ?)", symbol, price, shares_to_sell, userid)
+                db.execute("INSERT INTO transactions (symbol, price, quantity, buysell, userid) VALUES (?, ?, ?, 'Sell', ?)",
+                           symbol, price, shares_to_sell, userid)
                 db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash_balance, userid)
                 if shares_to_sell == shares_held:
                     db.execute("DELETE FROM holdings WHERE symbol = ?", symbol)
                 elif shares_to_sell < shares_held:
-                    db.execute("UPDATE holdings SET quantity = ? WHERE symbol = ?", shares_remaining, symbol)
+                    db.execute("UPDATE holdings SET quantity = ? WHERE symbol = ?",
+                               shares_remaining, symbol)
                 return redirect('/')
         except ValueError:
             return apology("error updating database", 400)
